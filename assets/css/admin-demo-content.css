@@ -1,0 +1,40 @@
+/* Contenedor principal */
+.cdc-wrap {
+  max-width: 900px;
+  background: #fff;
+  padding: 20px;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.cdc-separator {
+  margin: 30px 0;
+  border: none;
+  border-top: 1px solid #eaeaea;
+}
+
+.cdc-table th,
+.cdc-table td {
+  vertical-align: middle;
+  padding: 10px;
+}
+
+.cdc-table th {
+  background-color: #f1f1f1;
+  font-weight: 600;
+}
+
+.cdc-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+button#cdc-create-pages,
+button#cdc-create-posts {
+  margin-right: 10px;
+}
+
+/* Mensajes de alerta más anchos */
+.cdc-wrap .notice {
+  max-width: 860px;
+}
