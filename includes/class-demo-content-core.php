@@ -209,8 +209,31 @@ class Demo_Content_Core {
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
 
-        $default_image_path = get_template_directory() . '/assets/img/default-blog-image.webp';
-        $default_image_uri  = get_template_directory_uri() . '/assets/img/default-blog-image.webp';
+        // Imagen por defecto para las entradas demo
+        $default_image_path = CDC_PLUGIN_DIR . 'assets/img/default-blog-image.webp';
+        $default_image_uri  = CDC_PLUGIN_URL . 'assets/img/default-blog-image.webp';
+
+        // Antes de entrar en el bucle, comprobamos si ya tenemos un “default image ID” guardado
+        $default_attachment_id = get_option( 'cdc_default_image_id' );
+
+        if ( ! $default_attachment_id ) {
+            // Solo si no existe, subimos el archivo una vez
+            if ( file_exists( $default_image_path ) ) {
+                $tmp = media_sideload_image( $default_image_uri, 0, null, 'src' );
+                if ( ! is_wp_error( $tmp ) ) {
+                    global $wpdb;
+                    $default_attachment_id = $wpdb->get_var( "
+                        SELECT ID FROM {$wpdb->posts}
+                        WHERE post_type = 'attachment'
+                        ORDER BY post_date DESC
+                        LIMIT 1
+                    " );
+                    if ( $default_attachment_id ) {
+                        update_option( 'cdc_default_image_id', $default_attachment_id );
+                    }
+                }
+            }
+        }
 
         for ( $i = 1; $i <= $count; $i++ ) {
             // Generar título y slug según posición
@@ -233,11 +256,8 @@ class Demo_Content_Core {
             ) );
 
             // Asignar imagen destacada si existe
-            if ( $post_id && file_exists( $default_image_path ) ) {
-                $image_id = media_sideload_image( $default_image_uri, $post_id, null, 'id' );
-                if ( ! is_wp_error( $image_id ) ) {
-                    set_post_thumbnail( $post_id, $image_id );
-                }
+            if ( $post_id && $default_attachment_id ) {
+                set_post_thumbnail( $post_id, $default_attachment_id );
             }
         }
 
